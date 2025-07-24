@@ -39,7 +39,7 @@ class LSP_mt(Body16KeypointDataset):
                     transforms_base=None, transforms_stu=None, transforms_tea=None, **kwargs):
         if download:
             download_data(root, "images", "lsp_dataset.zip",
-                          "https://cloud.tsinghua.edu.cn/f/46ea73c89abc46bfb125/?dl=1")
+                          "http://sam.johnson.io/research/lsp_dataset_original.zip")
         else:
             check_exits(root, "lsp")
 

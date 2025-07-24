@@ -12,6 +12,7 @@ from .synthetic_animal_sp_all import synthetic_animal_sp_all
 from .synthetic_animal_sp_all_other import synthetic_animal_sp_all_other
 
 from .surreal import SURREAL
+from .surreal_3d import SURREAL3D, SURREAL3D_mt
 from .lsp import LSP
 from .lsp_mt import LSP_mt
 from .human36m import Human36M

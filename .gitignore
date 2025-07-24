@@ -1,0 +1,26 @@
+# Ignore datasets and large data folders
+extracted_3d_poses/
+surreal_info/
+files/
+logs/
+output_viz/
+
+# Ignore model checkpoints
+checkpoints/
+
+# Ignore Python cache
+__pycache__/
+lib/__pycache__/
+lib/datasets/__pycache__/
+lib/models/__pycache__/
+lib/transforms/__pycache__/
+prior/__pycache__/
+
+# Ignore paper PDF
+Raychaudhuri_Prior-guided_Source-free_Domain_Adaptation_for_Human_Pose_Estimation_ICCV_2023_paper.pdf
+
+# Ignore results if you want to keep them local only
+# results/
+
+# Ignore archive folder (optional)
+archive/ 
