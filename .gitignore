@@ -1,26 +1,264 @@
-# Ignore datasets and large data folders
-extracted_3d_poses/
-surreal_info/
-files/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Scrapy stuff
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Project-specific ignores
+
+# Data files
+*.npy
+*.npz
+*.pt
+*.pth
+*.tar
+*.zip
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Dataset directories
+datasets/
+data/
+MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/
+surreal/
+lsp/
+human36m/
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.3gp
+*.ogv
+*.ogg
+*.wav
+*.mp3
+*.flac
+*.aac
+*.wma
+*.m4a
+*.opus
+
+# Image files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.tif
+*.svg
+*.ico
+*.webp
+
+# Model checkpoints (keep only final ones)
+checkpoints/*.pth
+!checkpoints/best_improved_model.pth
+!checkpoints/final_improved_model.pth
+!checkpoints/prior_2d_final.pth
+!checkpoints/prior_3d_final.pth
+
+# Results and logs
+results/raw/
 logs/
 output_viz/
+*.log
+*.out
 
-# Ignore model checkpoints
-checkpoints/
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
 
-# Ignore Python cache
-__pycache__/
-lib/__pycache__/
-lib/datasets/__pycache__/
-lib/models/__pycache__/
-lib/transforms/__pycache__/
-prior/__pycache__/
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
 
-# Ignore paper PDF
-Raychaudhuri_Prior-guided_Source-free_Domain_Adaptation_for_Human_Pose_Estimation_ICCV_2023_paper.pdf
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Ignore results if you want to keep them local only
-# results/
+# Backup files
+*.bak
+*.backup
+*.old
 
-# Ignore archive folder (optional)
-archive/ 
+# Archive files
+*.7z
+*.rar
+*.tar.gz
+*.tar.bz2
+
+# Large text files
+*.txt
+*.csv
+*.tsv
+*.json
+*.xml
+*.yaml
+*.yml
+
+# Exclude specific large files
+extracted_mpmri_2d_poses.npz
+extracted_mpmri_2d_poses_train.npz
+extracted_mpmri_2d_poses_test.npz
+results_*.zip
+training_analysis_comprehensive.pdf
+training_analysis_comprehensive.png
+improved_training_additional_analysis.png
+improved_training_analysis_comprehensive.png
+training_curves_corrected.png
+
+# Keep only essential results
+results/*.csv
+!results/improved_training_history.csv
+results/*.json
+!results/evaluation_results.json
+
+# Exclude thesis_project-main subdirectories that contain data
+thesis_project-main/results/
+thesis_project-main/.git/
+thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/
+
+# Exclude any remaining large files
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx 
