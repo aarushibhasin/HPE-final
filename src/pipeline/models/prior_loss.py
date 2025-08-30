@@ -10,7 +10,7 @@ class PriorLoss(nn.Module):
         self.lambda_p = lambda_p
         
         # Import here to avoid circular imports
-        from src.priors.2d.models import PoseNDF2D
+        from src.priors.prior_2d.models import PoseNDF2D
         
         # Load prior model
         self.prior_model = PoseNDF2D(input_dim=34, hidden_dims=[256, 256, 256, 256])

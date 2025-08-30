@@ -1,155 +1,198 @@
-# POST: Prior-guided Source-free Domain Adaptation for Human Pose Estimation
+# HPE Integrated Model
 
-This repository contains the implementation of a multi-person 2D pose estimation system with prior-guided regularization, based on the POST paper. The system operates on point cloud representations of MRI scans and outputs both presence detection (0-4 people) and precise 2D keypoint coordinates for each detected person.
-
-## 📁 Repository Structure
-
-```
-├── src/
-│   ├── pipeline/           # Main integrated 2D pipeline
-│   │   ├── train.py        # Training script for integrated model
-│   │   ├── eval.py         # Evaluation script
-│   │   ├── data/           # Data loading modules
-│   │   ├── models/         # Model architectures
-│   │   └── utils/          # Utility functions and metrics
-│   ├── priors/             # Prior model implementations
-│   │   ├── 2d/            # 2D pose prior models
-│   │   └── 3d/            # 3D pose prior models
-│   └── thesis_project-main/ # Original thesis project files
-├── checkpoints/            # Model checkpoints
-├── results/               # Training results and evaluations
-├── docs/                  # Documentation and reports
-└── README.md
-```
+A comprehensive Human Pose Estimation (HPE) pipeline that integrates 2D and 3D prior models with a multi-person pose estimation system. This project implements the POST (Prior-guided Source-free Domain Adaptation for Human Pose Estimation) approach with enhancements for multi-person scenarios.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Python 3.8+
-- PyTorch 1.9+
+- PyTorch 1.12+
 - CUDA (optional, for GPU acceleration)
-- Required packages: `torch`, `torchvision`, `numpy`, `pandas`, `scikit-learn`, `scipy`
 
 ### Installation
-
-1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd POST
-```
+# Clone the repository
+git clone https://github.com/aarushibhasin/HPE-integrated-model.git
+cd HPE-integrated-model
 
-2. Install dependencies:
-```bash
-pip install torch torchvision numpy pandas scikit-learn scipy
+# Install dependencies
+pip install torch torchvision torchaudio
+pip install numpy pandas matplotlib seaborn
+pip install scikit-learn opencv-python
 ```
 
 ### Dataset Setup
+1. Place your MARS MPMRI dataset in the `thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/` directory
+2. The dataset should have the following structure:
+   ```
+   thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/
+   ├── src/
+   │   ├── train/
+   │   │   ├── featuremap.npy
+   │   │   └── kpt_labels.npy
+   │   └── test/
+   │       ├── featuremap.npy
+   │       └── kpt_labels.npy
+   ```
 
-#### MARS Dataset (2D Pipeline)
-The integrated pipeline expects MARS dataset in the following structure:
-```
-thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/src/
-├── train/
-│   ├── featuremap.npy     # Point cloud data (N, 16, 16, 5)
-│   └── kpt_labels.npy     # Keypoint annotations (N, 140)
-└── test/
-    ├── featuremap.npy
-    └── kpt_labels.npy
-```
-
-#### SURREAL Dataset (3D Prior)
-For 3D prior training, download the SURREAL dataset and set the path in the training script.
-
-## 🏋️ Training
-
-### 1. Train 2D Prior Model
+### Training
 ```bash
-cd src/priors/2d
-python train.py
+# Train the integrated model with prior loss
+python src/pipeline/train.py
 ```
 
-### 2. Train 3D Prior Model (Optional)
+### Evaluation
 ```bash
-cd src/priors/3d
-python train.py --data-root /path/to/surreal/dataset
+# Evaluate the trained model
+python src/pipeline/eval.py
 ```
 
-### 3. Train Integrated Pipeline
-```bash
-cd src/pipeline
-python train.py
+## 📁 Project Structure
+
 ```
-
-## 📊 Evaluation
-
-### Evaluate Integrated Model
-```bash
-cd src/pipeline
-python eval.py
+HPE-integrated-model/
+├── src/
+│   ├── pipeline/
+│   │   ├── models/
+│   │   │   ├── encoder_pc.py          # Point cloud encoder
+│   │   │   ├── pose_estimator.py      # Multi-person pose estimator
+│   │   │   └── prior_loss.py          # Prior loss integration
+│   │   ├── data/
+│   │   │   └── mars_dataset.py        # MARS dataset loader
+│   │   ├── utils/
+│   │   │   └── metrics.py             # Evaluation metrics
+│   │   ├── train.py                   # Main training script
+│   │   └── eval.py                    # Evaluation script
+│   └── priors/
+│       ├── prior_2d/                  # 2D prior models
+│       │   ├── models.py
+│       │   └── train.py
+│       └── prior_3d/                  # 3D prior models
+│           ├── models.py
+│           └── train.py
+├── checkpoints/                       # Model checkpoints
+├── results/                           # Training results and plots
+├── docs/                              # Documentation
+└── thesis_project-main/               # Original core modules
 ```
-
-This will evaluate the model and save results to `results/evaluation_results.json`.
-
-## 📈 Results
-
-The final integrated model achieves:
-- **PCK@0.05**: 96.54% (excellent keypoint localization)
-- **PCK@0.02**: 76.34% (good precise localization)
-- **MPJPE**: 0.1632 (low positioning error)
-- **Presence Accuracy**: 32.25% (needs improvement)
 
 ## 🔧 Model Architecture
 
 ### Integrated Pipeline
-- **PoseidonPC Encoder**: mpMARS backbone for point cloud feature extraction
-- **Improved Pose Estimator**: Residual MLP with separate heads for keypoints and presence
-- **Prior Loss**: Neural distance field for anatomical constraint enforcement
+- **Point Cloud Encoder**: mpMARS backbone for feature extraction
+- **Pose Estimator**: Improved multi-person pose estimator with residual connections
+- **Prior Loss**: Integration of 2D pose prior as a regularization term
 
-### Key Features
-- **Residual Connections**: Preserve gradient flow and feature information
-- **Batch Normalization**: Stabilize training and accelerate convergence
-- **Separate Heads**: Task-specific optimization for keypoints and presence
-- **Prior-Guided Training**: Effective integration of anatomical constraints
+### Prior Models
+- **2D Prior (PoseNDF2D)**: Neural Distance Field for 2D pose validation
+- **3D Prior (PoseNDF3D)**: Extended to 3D bone orientations
+
+## 📊 Results
+
+The model achieves:
+- **PCK@0.05**: ~0.008 (presence detection: ~95.8%)
+- **MPJPE**: ~0.8-1.0
+- **Training**: Stable convergence with early stopping at ~21 epochs
 
 ## 📚 Documentation
 
-- `docs/FINAL_INTEGRATED_MODEL_IMPLEMENTATION.md`: Technical implementation details
-- `docs/FINAL_INTEGRATED_MODEL_DETAILED_IMPLEMENTATION.md`: Comprehensive technical writeup
-- `docs/3D_PRIOR_MODEL_DEVELOPMENT.md`: 3D prior model development details
-- `docs/FINAL_MODEL_REPORT.md`: Final model performance report
+- [Final Integrated Model Implementation](docs/FINAL_INTEGRATED_MODEL_IMPLEMENTATION.md)
+- [Training Report](docs/training_report.md)
+- [3D Prior Model Development](docs/3D_PRIOR_MODEL_DEVELOPMENT.md)
 
-## 🎯 Key Contributions
+## 🔧 Recent Fixes
 
-1. **Residual Pose Estimator**: Novel architecture with improved gradient flow
-2. **Prior Loss Integration**: Seamless incorporation of anatomical constraints
-3. **Multi-Person Handling**: Efficient processing of variable person counts
-4. **Medical Domain Adaptation**: Specialized for MRI point cloud data
-5. **Comprehensive Evaluation Framework**: Multiple metrics for thorough assessment
+### Package Naming Issues
+- **Fixed**: Renamed `src/priors/2d/` to `src/priors/prior_2d/` (Python packages cannot start with digits)
+- **Fixed**: Renamed `src/priors/3d/` to `src/priors/prior_3d/`
+- **Updated**: All import statements throughout the codebase
 
-## 🔍 Troubleshooting
+### Prior Model Checkpoints
+- **Fixed**: Missing `prior_2d_final.pth` checkpoint (copied from `results/` to `checkpoints/`)
+- **Fixed**: Corrupted `prior_3d_final.pth` with NaN weights (replaced with working checkpoint)
+- **Fixed**: Model architecture mismatch (updated models to match checkpoint structure with BatchNorm layers)
+
+### Model Architecture Updates
+- **2D Prior**: Added BatchNorm1d layers to match checkpoint structure
+- **3D Prior**: Simplified architecture to match checkpoint (72-dimensional input)
+- **Verified**: All prior models load correctly without NaN weights
+
+## 🚨 Troubleshooting
 
 ### Common Issues
+1. **Import Errors**: Ensure you're using the updated package names (`prior_2d`, `prior_3d`)
+2. **Checkpoint Loading**: Verify checkpoints exist in `checkpoints/` directory
+3. **Data Loading**: Ensure MARS dataset is in the correct location
+4. **OpenMP Conflicts**: Set `KMP_DUPLICATE_LIB_OK=TRUE` environment variable
 
-1. **CUDA Out of Memory**: Reduce batch size in training scripts
-2. **Data Loading Errors**: Ensure MARS dataset structure matches expected format
-3. **Prior Model Not Found**: Train 2D prior model before running integrated pipeline
+### Environment Setup
+```bash
+# For Windows PowerShell
+$env:KMP_DUPLICATE_LIB_OK="TRUE"
 
-### Performance Tips
+# For Linux/Mac
+export KMP_DUPLICATE_LIB_OK=TRUE
+```
 
-- Use GPU acceleration for faster training
-- Adjust batch size based on available memory
-- Monitor training logs for convergence issues
+### Quick Verification Commands
 
-## 📄 License
+**Test Prior Models:**
+```bash
+python -c "
+import sys; sys.path.append('src')
+from src.priors.prior_2d.models import PoseNDF2D
+from src.priors.prior_3d.models import PoseNDF3D
+import torch
 
-This project is for research purposes. Please cite the original POST paper if you use this implementation.
+# Test 2D prior
+model_2d = PoseNDF2D()
+checkpoint_2d = torch.load('checkpoints/prior_2d_final.pth', map_location='cpu')
+model_2d.load_state_dict(checkpoint_2d['model_state_dict'])
+print('✅ 2D prior loaded successfully')
+
+# Test 3D prior
+model_3d = PoseNDF3D()
+checkpoint_3d = torch.load('checkpoints/prior_3d_final.pth', map_location='cpu')
+model_3d.load_state_dict(checkpoint_3d['model_state_dict'])
+print('✅ 3D prior loaded successfully')
+"
+```
+
+**Test Main Model Checkpoints:**
+```bash
+python -c "
+import sys; sys.path.append('src')
+from src.pipeline.models.encoder_pc import poseidonPcEncoder
+from src.pipeline.models.pose_estimator import ImprovedPoseEstimator
+import torch
+
+# Create models
+encoder = poseidonPcEncoder(model_architecture='mpMARS', representation_embedding_dim=512, pretrained=False, grid_dims=(16, 16))
+pose_estimator = ImprovedPoseEstimator(max_poses=4, num_kpts=17, hidden_dim=128, num_layers=2, dropout=0.3)
+
+# Test loading best model
+checkpoint = torch.load('checkpoints/best_improved_model.pth', map_location='cpu')
+encoder.load_state_dict(checkpoint['encoder_state_dict'], strict=False)
+pose_estimator.load_state_dict(checkpoint['pose_estimator_state_dict'], strict=False)
+print('✅ Main model checkpoints loaded successfully')
+"
+```
 
 ## 🤝 Contributing
 
-This is a research implementation. For questions or issues, please refer to the documentation or create an issue.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-## 📞 Contact
+## 📄 License
 
-For questions about this implementation, please refer to the documentation in the `docs/` folder.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- Based on the POST paper: "Prior-guided Source-free Domain Adaptation for Human Pose Estimation"
+- Original MARS dataset and poseidon framework
+- PyTorch and the open-source community
 

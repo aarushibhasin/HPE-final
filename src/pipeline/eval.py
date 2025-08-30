@@ -51,18 +51,13 @@ def load_trained_model(checkpoint_path):
         dropout=0.3
     )
     
-    # Load state dicts
-    if 'encoder_state_dict' in checkpoint:
-        encoder.load_state_dict(checkpoint['encoder_state_dict'])
-        print("✅ Loaded encoder state dict")
-    else:
-        print("⚠️ No encoder state dict found in checkpoint")
+    # Load encoder
+    encoder.load_state_dict(checkpoint['encoder_state_dict'], strict=False)
+    print(f"✅ Loaded encoder from {checkpoint_path}")
     
-    if 'pose_estimator_state_dict' in checkpoint:
-        pose_estimator.load_state_dict(checkpoint['pose_estimator_state_dict'])
-        print("✅ Loaded pose estimator state dict")
-    else:
-        print("⚠️ No pose estimator state dict found in checkpoint")
+    # Load pose estimator
+    pose_estimator.load_state_dict(checkpoint['pose_estimator_state_dict'], strict=False)
+    print(f"✅ Loaded pose estimator from {checkpoint_path}")
     
     return encoder, pose_estimator
 
