@@ -223,7 +223,7 @@ Thumbs.db
 *.tar.gz
 *.tar.bz2
 
-# Large text files
+# Large text files (but keep important config files)
 *.txt
 *.csv
 *.tsv
@@ -232,7 +232,7 @@ Thumbs.db
 *.yaml
 *.yml
 
-# Exclude specific large files
+# Exclude specific large files (these will be recreated by extraction script)
 extracted_mpmri_2d_poses.npz
 extracted_mpmri_2d_poses_train.npz
 extracted_mpmri_2d_poses_test.npz
@@ -248,6 +248,7 @@ results/*.csv
 !results/improved_training_history.csv
 results/*.json
 !results/evaluation_results.json
+!results/prior_2d_norm_stats.json
 
 # Exclude thesis_project-main subdirectories that contain data
 thesis_project-main/results/

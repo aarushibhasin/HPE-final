@@ -67,7 +67,8 @@ class PriorLoss(nn.Module):
         else:
             return torch.tensor(0.0, device=predicted_poses.device)
     
-    def _keypoints_to_bones(self, poses):
+    @staticmethod
+    def _keypoints_to_bones(poses):
         """
         Convert 2D keypoints to bone vectors for prior model
         Args:

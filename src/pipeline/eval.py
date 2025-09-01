@@ -20,7 +20,7 @@ sys.path.append('src')
 # Import our modules
 from pipeline.models.encoder_pc import poseidonPcEncoder
 from pipeline.models.pose_estimator import ImprovedPoseEstimator
-from pipeline.data.mars_dataset import create_mars_data_loaders
+from pipeline.data import create_mars_data_loaders
 from pipeline.utils.metrics import evaluate_model
 
 def load_trained_model(checkpoint_path):
@@ -84,7 +84,7 @@ def evaluate_trained_model(checkpoint_path="checkpoints/best_improved_model.pth"
     
     # Data paths
     train_dir = "thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/src/train"
-    test_dir = "thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/src/test"
+    test_dir = "thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/src/val"  # Use val instead of test
     
     # Check if data directories exist
     if not Path(train_dir).exists():
@@ -92,7 +92,7 @@ def evaluate_trained_model(checkpoint_path="checkpoints/best_improved_model.pth"
         return None
     
     if not Path(test_dir).exists():
-        print(f"❌ Test data directory not found: {test_dir}")
+        print(f"❌ Validation data directory not found: {test_dir}")
         return None
     
     # Create data loaders
@@ -177,4 +177,4 @@ if __name__ == "__main__":
     if metrics is not None:
         print("\n✅ Evaluation completed successfully!")
     else:
-        print("\n❌ Evaluation failed!") 
+        print("\n❌ Evaluation failed!")

@@ -19,6 +19,12 @@ cd HPE-integrated-model
 pip install torch torchvision torchaudio
 pip install numpy pandas matplotlib seaborn
 pip install scikit-learn opencv-python
+
+# Extract prior training data from MARS dataset (required for first-time setup)
+python scripts/extract_prior_training_data.py
+
+# Verify everything works correctly
+python -c "from src.pipeline.data import create_mars_data_loaders; from src.priors.prior_2d.models import PoseNDF2D; print('✅ All imports working!')"
 ```
 
 ### Dataset Setup
@@ -99,6 +105,7 @@ The model achieves:
 - [Final Integrated Model Implementation](docs/FINAL_INTEGRATED_MODEL_IMPLEMENTATION.md)
 - [Training Report](docs/training_report.md)
 - [3D Prior Model Development](docs/3D_PRIOR_MODEL_DEVELOPMENT.md)
+- [Updates on Feedback](docs/UPDATES_ON_FEEDBACK.md) - **Important for understanding prior model usage**
 
 ## 🔧 Recent Fixes
 
@@ -111,6 +118,36 @@ The model achieves:
 - **Fixed**: Missing `prior_2d_final.pth` checkpoint (copied from `results/` to `checkpoints/`)
 - **Fixed**: Corrupted `prior_3d_final.pth` with NaN weights (replaced with working checkpoint)
 - **Fixed**: Model architecture mismatch (updated models to match checkpoint structure with BatchNorm layers)
+
+### Import and Data Issues (Latest Fixes)
+- **Fixed**: Missing `__init__.py` files preventing proper imports
+- **Fixed**: Created extraction script to recreate `extracted_mpmri_2d_poses.npz` from MARS dataset
+- **Fixed**: Made `PriorLoss._keypoints_to_bones` a static method for easier testing
+- **Clarified**: Prior model output interpretation (lower values = more realistic poses)
+
+## 🚨 **Troubleshooting**
+
+### **Important: Prior Model Output Interpretation**
+- **Low values (near 0)**: Realistic, anatomically correct poses ✅
+- **High values (near 1)**: Unrealistic, corrupted poses ❌
+- **0.0054 output**: Indicates VERY REALISTIC poses, not unrealistic ones!
+
+### **Quick Verification**
+```bash
+# Test if all imports work
+python -c "from src.pipeline.data import create_mars_data_loaders; from src.priors.prior_2d.models import PoseNDF2D; print('✅ All imports working!')"
+
+# Test if data extraction works
+python scripts/extract_prior_training_data.py
+
+# Test if training script can import everything
+python -c "import sys; sys.path.append('src'); from pipeline.train import train_improved_model; print('✅ Training script ready!')"
+```
+
+### **Common Issues**
+- **Import Errors**: Make sure you're in the project root directory
+- **OpenMP Conflicts**: Set `$env:KMP_DUPLICATE_LIB_OK="TRUE"` (Windows) or `export KMP_DUPLICATE_LIB_OK=TRUE` (Linux/Mac)
+- **Missing Data**: Ensure MARS dataset is in `thesis_project-main/MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/`
 
 ### Model Architecture Updates
 - **2D Prior**: Added BatchNorm1d layers to match checkpoint structure
