@@ -41,9 +41,9 @@ Run the data extraction script to recreate the original file:
 python scripts/extract_prior_training_data.py
 ```
 
-This recreates `extracted_mpmri_2d_poses.npz` with the EXACT same structure:
-- `valid_poses`: Real pose bone vectors from MARS dataset (normalized to [0,1] range)
-- Note: MARS dataset contains only valid poses, no invalid poses are generated
+This recreates `extracted_mpmri_2d_poses.npz` with the expected structure:
+- `valid_poses`: Real pose bone vectors from MARS dataset (already normalized in source; no extra normalization applied)
+- Note: MARS dataset contains only valid poses; no invalid poses are generated
 
 ## 📊 **Correct Prior Model Usage**
 
@@ -74,9 +74,11 @@ if keypoints.shape[1] == 140:
     N = len(keypoints)
     # Extract first 136 values (keypoint data)
     kpt_data = keypoints[:, :MAX_PPL * NUM_KPTS * KPT_DIM]
-    # Reshape to (N, 4_people, 17_keypoints, 2_dims)
-    real_kpts = kpt_data.reshape(N, MAX_PPL, NUM_KPTS, KPT_DIM)
-    
+    # Original saved order was (N, kpt_dims, max_people, num_kpts)
+    kpt_data = kpt_data.reshape(N, KPT_DIM, MAX_PPL, NUM_KPTS)
+    # Transpose to (N, max_people, num_kpts, kpt_dims)
+    real_kpts = np.transpose(kpt_data, (0, 2, 3, 1))
+
     # Get a single person's pose
     real_pose = real_kpts[100, 0]  # First person from sample 100
     print(f"Real pose shape: {real_pose.shape}")  # Should be (17, 2)

@@ -62,43 +62,23 @@ def load_mars_keypoints(data_dir):
         
         # Extract keypoint data (first 136 values)
         kpt_data = keypoints[:, :max_people * num_kpts * kpt_dims]
-        reshaped_kpts = kpt_data.reshape(N, max_people, num_kpts, kpt_dims)
+        # Original saved order was (N, kpt_dims, max_people, num_kpts)
+        kpt_data = kpt_data.reshape(N, kpt_dims, max_people, num_kpts)
+        # Transpose to (N, max_people, num_kpts, kpt_dims)
+        reshaped_kpts = np.transpose(kpt_data, (0, 2, 3, 1))
         
         print(f"   Reshaped to: {reshaped_kpts.shape}")
         return reshaped_kpts
     else:
         raise ValueError(f"Unexpected keypoint format: {keypoints.shape}")
 
-def normalize_poses_to_01(poses):
+def passthrough_already_normalized(poses):
     """
-    Normalize poses to [0,1] range EXACTLY as done in original training
-    This matches the normalization used in prior_filter.py
+    The MARS keypoints are already normalized using the room bounding box.
+    Do not re-normalize; simply return as-is.
     """
-    print("📊 Normalizing poses to [0,1] range...")
-    
-    # Reshape to (N*people, 17, 2) for easier processing
-    N, max_people, num_kpts, kpt_dims = poses.shape
-    poses_flat = poses.reshape(-1, num_kpts, kpt_dims)
-    
-    normalized_poses = np.zeros_like(poses_flat)
-    
-    for i in range(len(poses_flat)):
-        pose = poses_flat[i]
-        
-        # Normalize to [0,1] range as done in original training
-        pose_min = pose.min()
-        pose_max = pose.max()
-        
-        if pose_max > pose_min:
-            normalized_poses[i] = (pose - pose_min) / (pose_max - pose_min)
-        else:
-            normalized_poses[i] = pose
-    
-    # Reshape back to (N, max_people, 17, 2)
-    normalized_poses = normalized_poses.reshape(N, max_people, num_kpts, kpt_dims)
-    
-    print(f"   Normalized poses shape: {normalized_poses.shape}")
-    return normalized_poses
+    print("📊 Skipping normalization (already normalized in dataset)...")
+    return poses
 
 
 
@@ -128,8 +108,8 @@ def main():
     all_keypoints = np.concatenate([train_keypoints, val_keypoints], axis=0)
     print(f"   Total keypoints: {all_keypoints.shape}")
     
-    # Normalize poses to [0,1] range EXACTLY as done in original training
-    normalized_keypoints = normalize_poses_to_01(all_keypoints)
+    # Do not renormalize; dataset is already normalized
+    normalized_keypoints = passthrough_already_normalized(all_keypoints)
     
     # Extract valid poses (poses that have non-zero keypoints)
     valid_poses = []
@@ -157,7 +137,6 @@ def main():
     
     print(f"✅ Prior training data extracted and saved to: {output_file}")
     print(f"   Valid poses: {valid_bone_vectors.shape}")
-    print(f"   Note: MARS dataset contains only valid poses")
     
     # Verify the data matches the expected structure
     print("\n🔍 Verification:")

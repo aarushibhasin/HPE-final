@@ -136,13 +136,18 @@ dmypy.json
 *.pkl
 *.pickle
 
-# Dataset directories
+# Dataset directories (keep code under src/, ignore only raw data roots)
 datasets/
 data/
 MARS_SRCmpmri_MAXPPL4_GRID8_NORMED/
 surreal/
 lsp/
 human36m/
+# Explicitly include data loader code even if a parent folder is ignored
+!src/
+!src/pipeline/
+!src/pipeline/data/
+!src/pipeline/data/**
 
 # Large media files
 *.mp4
